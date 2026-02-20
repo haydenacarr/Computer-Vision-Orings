@@ -1,5 +1,4 @@
 import cv2 as cv
-import numpy as np
 import time
 
 # Process image without opencv
@@ -53,9 +52,14 @@ def otsu(img):
 #read in an image into memory
 for i in range(1,16):
     img = cv.imread('Orings/Oring' + str(i) + '.jpg', 0)
+    before = time.time()
     thresh = otsu(img)
     bw = threshold(thresh, img)
     rgb = cv.cvtColor(bw, cv.COLOR_GRAY2RGB)
+    after = time.time()
+    fin = after-before
+    print("Time taken to process: " + str(after-before))
+    cv.putText(rgb, f"Time: {fin:.3f}", (40,40), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 2)
     cv.imshow("Thresholded Image", rgb)
     cv.waitKey(0)
     cv.destroyAllWindows()
