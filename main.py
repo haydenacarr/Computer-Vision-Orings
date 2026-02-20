@@ -5,7 +5,7 @@ import time
 def threshold(thresh, img):
     for x in range(0, img.shape[0]):
         for y in range(0, img.shape[1]):
-            if img[x,y] > thresh:
+            if img[x,y] < thresh:
                 img[x,y] = 255
             else:
                 img[x,y] = 0
@@ -49,12 +49,48 @@ def otsu(img):
 
     return thresh
 
+# Dialate code (adapted from erode code)
+def dialate(img, num_levels) :
+    for level in range (num_levels):
+        out = img.copy()
+        neighbours = [(-1, -1), (-1,0), (-1,1), (0,-1), (0,1), (1,-1), (1,0), (1,1)]
+        for i in range(1, img.shape[0]-1):
+            for j in range(1, img.shape[1]-1):
+                if img[i,j] == 0:
+                    toErode = False
+                    for y,x in neighbours:
+                        if img[i+y,j+x] == 255:
+                            toErode = True
+                    if toErode:
+                        out [i,j] = 255
+        img = out
+    return out
+
+# Erode code (adapted from lab 3)
+def erode(img, num_levels) :
+    for level in range (num_levels):
+        out = img.copy()
+        neighbours = [(-1, -1), (-1,0), (-1,1), (0,-1), (0,1), (1,-1), (1,0), (1,1)]
+        for i in range(1, img.shape[0]-1):
+            for j in range(1, img.shape[1]-1):
+                if img[i,j] == 255: 
+                    toErode = False
+                    for y,x in neighbours:
+                        if img[i+y,j+x] == 0:
+                            toErode = True
+                    if toErode:
+                        out [i,j] = 0
+        img = out
+    return out
+
 #read in an image into memory
 for i in range(1,16):
     img = cv.imread('Orings/Oring' + str(i) + '.jpg', 0)
     before = time.time()
     thresh = otsu(img)
     bw = threshold(thresh, img)
+    bw = dialate(bw, 2)
+    bw = erode(bw, 2)
     rgb = cv.cvtColor(bw, cv.COLOR_GRAY2RGB)
     after = time.time()
     fin = after-before
