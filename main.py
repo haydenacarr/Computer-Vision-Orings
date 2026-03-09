@@ -88,7 +88,7 @@ def erode(img, num_levels) :
 def cclabelling(binary_img):
     rows, cols = binary_img.shape
     labels = np.zeros((rows, cols), dtype=int)
-    label_counter = 1
+    counter = 1
     parent = {}
 
     def find(i):
@@ -103,9 +103,9 @@ def cclabelling(binary_img):
                 w = labels[r, c-1]
 
                 if n == 0 and w == 0:
-                    labels[r, c] = label_counter
-                    parent[label_counter] = label_counter
-                    label_counter += 1
+                    labels[r, c] = counter
+                    parent[counter] = counter
+                    counter += 1
                 elif n != 0 and w != 0:
                     labels[r, c] = min(n, w)
                     parent[find(max(n, w))] = find(min(n, w))
